@@ -40,7 +40,10 @@ systemctl  disable  firewalld
 #允许数据包转发
 echo "1" > /proc/sys/net/ipv4/ip_forward 
 
-yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+yum install -y kubelet 
+yum install -y kubectl
+yum install -y kubeadm 
+
 
 systemctl enable --now kubelet
 

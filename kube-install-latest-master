@@ -5,6 +5,7 @@ yum install -y docker-ce
 systemctl enable docker
 systemctl start docker
 
+#安装k8s之前添加yum源
 cat <<EOF > /etc/yum.repos.d/kubernetes.repo
 [kubernetes]
 name=Kubernetes

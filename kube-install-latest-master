@@ -37,6 +37,9 @@ sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
 systemctl  stop  firewalld
 systemctl  disable  firewalld
 
+#允许数据包转发
+echo "1" > /proc/sys/net/ipv4/ip_forward 
+
 yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
 
 systemctl enable --now kubelet
@@ -65,7 +68,6 @@ kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/62e44c867a2846
 #去污点，单节点能跑pod
 kubectl taint nodes --all node-role.kubernetes.io/master-
 
-#允许数据包转发
-echo "1" > /proc/sys/net/ipv4/ip_forward 
+
 
 

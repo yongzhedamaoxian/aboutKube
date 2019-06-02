@@ -51,6 +51,4 @@ kubectl taint nodes --all node-role.kubernetes.io/master-
 #允许数据包转发
 echo "1" > /proc/sys/net/ipv4/ip_forward 
 
-#推荐的docker cgroup driver是systemd,将cgroupfs 改为systemd
-/var/lib/kubelet/kubeadm-flags.env
-sed -i "s/cgroupfs/systemd/g" /var/lib/kubelet/kubeadm-flags.env
+

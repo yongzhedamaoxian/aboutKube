@@ -36,5 +36,9 @@ sysctl --system
 systemctl daemon-reload
 systemctl restart kubelet
 
+#允许数据包转发
+echo "1" > /proc/sys/net/ipv4/ip_forward 
+
+#推荐的docker cgroup driver是systemd,将cgroup 改为systemd
 
 

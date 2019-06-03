@@ -76,6 +76,10 @@ swapoff -a
 #允许数据包转发
 echo "1" > /proc/sys/net/ipv4/ip_forward 
 
+#改host名，普通节点换个名字
+echo "node0.localdomain" > /etc/hostname
+sysctl kernel.hostname=node0.localdomain
+
 yum install -y kubelet-1.14.2*
 yum install -y kubectl-1.14.2*
 yum install -y kubeadm-1.14.2* 

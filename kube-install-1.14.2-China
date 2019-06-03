@@ -32,6 +32,34 @@ gpgkey=http://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg
        http://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
 EOF
 
+#加上镜像
+docker pull yongzhedamaoxian/kube-proxy:v1.14.2
+docker tag yongzhedamaoxian/kube-proxy:v1.14.2   k8s.gcr.io/kube-proxy:v1.14.2
+docker rmi yongzhedamaoxian/kube-proxy:v1.14.2
+
+docker pull yongzhedamaoxian/kube-apiserver:v1.14.2
+docker tag yongzhedamaoxian/kube-apiserver:v1.14.2   k8s.gcr.io/kube-apiserver:v1.14.2
+docker rmi yongzhedamaoxian/kube-apiserver:v1.14.2
+
+docker pull yongzhedamaoxian/kube-controller-manager:v1.14.2
+docker tag yongzhedamaoxian/kube-controller-manager:v1.14.2   k8s.gcr.io/kube-controller-manager:v1.14.2
+docker rmi yongzhedamaoxian/kube-controller-manager:v1.14.2
+
+docker pull yongzhedamaoxian/kube-scheduler:v1.14.2
+docker tag yongzhedamaoxian/kube-scheduler:v1.14.2   k8s.gcr.io/kube-scheduler:v1.14.2
+docker rmi yongzhedamaoxian/kube-scheduler:v1.14.2
+
+docker pull yongzhedamaoxian/coredns:1.3.1
+docker tag yongzhedamaoxian/coredns:1.3.1   k8s.gcr.io/coredns:1.3.1
+docker rmi yongzhedamaoxian/coredns:1.3.1
+
+docker pull yongzhedamaoxian/etcd:3.3.10
+docker tag yongzhedamaoxian/etcd:3.3.10   k8s.gcr.io/etcd:3.3.10
+docker rmi yongzhedamaoxian/etcd:3.3.10
+
+docker pull yongzhedamaoxian/pause:3.1
+docker tag yongzhedamaoxian/pause:3.1   k8s.gcr.io/pause:3.1
+docker rmi yongzhedamaoxian/pause:3.1
 
 
 # Set SELinux in permissive mode (effectively disabling it)
@@ -45,9 +73,9 @@ systemctl  disable  firewalld
 #允许数据包转发
 echo "1" > /proc/sys/net/ipv4/ip_forward 
 
-yum install -y kubelet 
-yum install -y kubectl
-yum install -y kubeadm 
+yum install -y kubelet-1.14.2*
+yum install -y kubectl-1.14.2*
+yum install -y kubeadm-1.14.2* 
 
 
 systemctl enable --now kubelet
@@ -65,7 +93,7 @@ systemctl daemon-reload
 systemctl restart kubelet
 
 
-kubeadm init --pod-network-cidr 10.244.0.0/16  --ignore-preflight-errors=all
+kubeadm init --pod-network-cidr 10.244.0.0/16 --kubernetes-version=v1.14.2 --ignore-preflight-errors=all
 
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config

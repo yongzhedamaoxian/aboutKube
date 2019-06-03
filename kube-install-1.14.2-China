@@ -2,25 +2,53 @@ yum install -y yum-utils  device-mapper-persistent-data   lvm2
 yum-config-manager  --add-repo  https://download.docker.com/linux/centos/docker-ce.repo
 yum -y update
 yum install -y docker-ce
+
+#k8s 1.10.0版本用下面那个
+#yum  install  -y  --setopt=obsoletes=0  \
+#    docker-ce-17.03.2.ce-1.el7.centos  \
+#    docker-ce-selinux-17.03.2.ce-1.el7.centos
 systemctl enable docker
 systemctl start docker
 
+#安装k8s之前添加yum源
+#cat <<EOF > /etc/yum.repos.d/kubernetes.repo
+#[kubernetes]
+#name=Kubernetes
+#baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+#enabled=1
+#gpgcheck=1
+#repo_gpgcheck=1
+#gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+#exclude=kube*
+#EOF
 cat <<EOF > /etc/yum.repos.d/kubernetes.repo
 [kubernetes]
 name=Kubernetes
-baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+baseurl=http://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64
 enabled=1
-gpgcheck=1
-repo_gpgcheck=1
-gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
-exclude=kube*
+gpgcheck=0
+repo_gpgcheck=0
+gpgkey=http://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg
+       http://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
 EOF
+
+
 
 # Set SELinux in permissive mode (effectively disabling it)
 setenforce 0
 sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
 
-yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+#关闭防火墙
+systemctl  stop  firewalld
+systemctl  disable  firewalld
+
+#允许数据包转发
+echo "1" > /proc/sys/net/ipv4/ip_forward 
+
+yum install -y kubelet 
+yum install -y kubectl
+yum install -y kubeadm 
+
 
 systemctl enable --now kubelet
 
@@ -44,3 +72,6 @@ sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/62e44c867a2846fefb68bd5f178daf4da3095ccb/Documentation/kube-flannel.yml
+
+#去污点，单节点能跑pod
+kubectl taint nodes --all node-role.kubernetes.io/master-

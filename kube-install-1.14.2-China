@@ -72,6 +72,7 @@ systemctl  disable  firewalld
 
 #关闭系统交换区
 swapoff -a
+sed -ri 's/.*swap.*/#&/' /etc/fstab
 
 #允许数据包转发
 echo "1" > /proc/sys/net/ipv4/ip_forward 
